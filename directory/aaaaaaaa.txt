@@ -1,0 +1,176 @@
+def main(request):
+	files = FileDetailInfo.objects.order_by('-file_upload')
+	return render(request, 'cloud_app/main.html', {'files': files})
+
+
+def user_edit(request):
+	if request.method == "POST":
+		form = UserForm(request.UserInfo)
+		if form.is valid():
+			user = form.save()
+			return render(request, 'cloud_app/main.html', {'files': files})
+	else:
+		form = UserForm()
+	return render(request, 'cloud_app/main.html', {'files': files})
+
+
+def file_detail(request, pk):
+	file = get_object_or_404(FileDetailInfo, pk=pk)
+	return render(request, 'cloud_app/file_detail.html', {'file':file})
+
+
+def file_upload(request):
+	if request.method == "POST":
+		form = FileUploadForm(request.FileDetailInfo)
+		if form.is valid():
+			file = form.save()
+			return redirect('file_detail', pk=file.pk)
+	else:
+		form = FileForm()
+	return render(request, 'cloudapp/file_deatail.html', {'form':form})
+
+
+def file_edit(request, pk):
+	file = get_object_or_404(FileDetailInfo, pk=pk)
+    	if request.method == "POST":
+        		form = FileEditForm(request.POST, instance=file)
+        		if form.is_valid():
+            		file = form.save()
+            		return redirect('file_detail', pk=file.pk)
+    	else:
+        		form = FileEditForm(instance=file)
+    	return render(request, cloudapp/file_deatail.html', {'form': form})
+
+
+def file_remove(request, pk):
+	file = get_object_or_404()
+	file.delete()
+	return redirect('main')
+		
+
+def add_comment_to_file(request, pk):
+	comment = get_object_or_404(Comment, pk=pk)
+	comment_pk = comment.filedetailinfo.pk
+	comment.save()
+	return redirect('file_detail, pk=file.pk)
+
+
+def comment_edit(request, pk):
+	comment = get_object_or_404(Comment, pk=pk)
+	comment_pk = comment.filedetailinfo.pk
+	comment.save()
+	return redirect('file_detail, pk=file.pk)
+
+
+def comment_remove(request, pk):
+	comment = get_object_or_404(Comment, pk=pk)
+	file_pk = comment.filedetailinfo.pk
+	comment.delete()
+	return redirect('file_detail', pk=file_pk)
+
+
+
+
+class FileUploadForm(forms.ModelForm):
+	class Meta:
+		model = FileDetailInfo
+		fields = ('file_title', 'guest', , )
+
+class FileEditForm(forms.ModelForm):
+	class Meta:
+		model = FileDetailInfo
+		fields = ('file_title', , )
+
+class UserForm(forms.ModelForm):
+	class Meta:
+		model = UserInfo
+		fields = ('Phone_Num', )
+
+
+
+{% extends 'base.html' %}
+{% load static %}
+<html lang="ko">
+<meta charset="UTF-8">
+<style>
+    .card {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        width: 150px;
+        word-wrap: break-word;
+        background-color: lightgray;
+        background-clip: border-box;
+        border: 1px solid rgba(0, 0, 0, 0.125);
+        border-radius: 0.25rem;
+    }
+</style>
+{% block content %}
+    <h3>업로드 파일</h3>
+    {% for file in files %}
+    <div class="col mb-5">
+        <div class="card h-50"><a href=''>
+            <img class="card-img-top" src="" alt="...">
+            <div class="card-body p-4">
+                <h5 class="fw-bolder">{{ file.file_title }}</h5>
+                <h6> {{ file.file_upload }} </h6>
+                {% for guest in file.guest.all %}
+                <h6> {{ guest.count }}명에게 공유 </h6>
+                {% empty %}
+                <h6> 나만보기 </h6>
+                {% endfor %}
+            </div></a>
+        </div>
+    </div>
+    {% empty %}
+        <p>업로드 파일이 없습니다.</p>
+    {% endfor %}
+    <h3>공유받은 파일</h3>
+    {% for file in files %}
+    <div class="col mb-5">
+        <div class="card h-50"><a href=''>
+            <img class="card-img-top" src="">
+            <div class="card-body p-4">
+                <h5 class="fw-bolder">{{ file.file_title }}</h5>
+                <h6> {{ file.file_upload }} </h6>
+                <h6> {{ file.owner }} 님이 공유 </h6>
+            </div>
+        </a></div>
+    </div>
+    {% empty %}
+    <p>공유받은 파일이 없습니다.</p>
+    {% endfor %}
+{% endblock %}
+
+
+<body>
+    {% if user.is_authenticated %}
+        <div class="page-header">
+            <h1><a href="{% url 'index' %}">
+                <center>OSP Cloud</center>
+            </a></h1>
+            <a href={% url "social:begin" "google-plus" %}""><center>
+                <button type="submit" class="save btn btn-primary">구글 로그인</button>
+            </center></a>
+        </div>
+    {% else %}
+        <div class = "page-header">
+            <a href="{% url 'file_upload' %}" class="top-menu" >
+                <button type="submit" class="save btn btn-primary">업로드</button></a>
+            <h1><a href="{% url 'index' %}">OSP Cloud</a></h1>
+        </div>
+        <div id  = "main">
+            <div class = "profile">
+                <img src={{ UserInfo.images }} width="150" height="150">
+                    <h5> {{ UserInfo.name }} </h5>
+                    <h6> {{ UserInfo.email }} </h6>
+                <h5><center><a href="">회원정보수정</a>&nbsp;&nbsp;
+                    <a href="">로그아웃</a></center></h5>
+            </div>
+            <div class="content_container">
+                    {% block content %}
+                    {% endblock %}
+            </div>
+        </div>
+    {% endif %}
+</body>

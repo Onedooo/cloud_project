@@ -1,0 +1,76 @@
+{% extends 'cloud/base.html' %}
+{% load static %}
+<html lang="ko">
+<meta charset="UTF-8">
+<style>
+    .file-zone {
+        display: grid;
+        grid-gap: 0;
+        grid-template-columns: repeat(auto-fill,minmax(220px,220px));
+    }
+    .container{
+        border-left: solid whitesmoke;
+    }
+    .card {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        word-wrap: break-word;
+        background-color: #fff;
+        background-clip: border-box;
+        border: 1px solid rgba(0, 0, 0, 0.125);
+        border-radius: 0.25rem;
+    }
+    .h-50 {
+        height: 100% !important;
+    }
+</style>
+{% block content %}
+<div class="container">
+    <a href="{% url 'file_upload' %}" class="top-menu" >
+                <button type="submit" class="save btn btn-primary">업로드</button></a>
+    <h2>업로드 파일</h2>
+    <br>
+    <div class="file-zone">
+        {% for file in files %}
+            <div class="card h-50"><a href="{% url 'file_detail' pk=file.pk %}">
+                <div class="card-body p-4">
+                    <h4 class="fw-bolder">{{ file.file_title }}</h4>
+                    <h5> {{ file.file_upload }} </h5>
+                    {% for guest in file.guest.all %}
+                    <h5> {{ guest.count }}명에게 공유 </h5>
+                    {% empty %}
+                    <h5> 나만보기 </h5>
+                    {% endfor %}
+                </div>
+            </a>
+            </div>
+    {% empty %}
+        <br><br>
+        <center><h4>업로드 파일이 없습니다</h4></center>
+        <br><br>
+    {% endfor %}
+    </div>
+    <br><br>
+    <h2>공유받은 파일</h2>
+    <br>
+    {% for file in files %}
+        {% if me in file.guest_name.all %}
+        <div class="col mb-5">
+            <div class="card h-50"><a href=''>
+                <img class="card-img-top" src="">
+                <div class="card-body p-4">
+                    <h4 class="fw-bolder">{{ file.file_title }}</h4>
+                    <h5> {{ file.file_upload }} </h5>
+                    <h5> {{ file.owner }} 님이 공유 </h5>
+                </div>
+            </a></div>
+        </div>
+        {% endif %}
+    {% empty %}
+    <br><br>
+    <center><h4>공유받은 파일이 없습니다</h4></center>
+    {% endfor %}
+</div>
+{% endblock %}

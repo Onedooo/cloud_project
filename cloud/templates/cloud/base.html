@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>OSP Cloud</title>
+    <link rel="stylesheet" href="https://fonts.google.com/specimen/Black+Han+Sans?subset=korean">
+<!--    <link rel="stylesheet" type="text/css" href="{%static 'css/style.css' %}">-->
+<!--    <link rel="stylesheet" type="text/css" href="{%static 'css/styles.css' %}">-->
+<!--    <link rel="stylesheet" type="text/css" href="{%static 'css/styles2.css' %}">-->
+    <style>
+        body {
+            background-color: darkslategrey;
+        }
+
+        .page-header {
+            margin-top: 0;
+            padding: 20px 20px 20px 40px;
+            color:whitesmoke;
+            border-bottom: whitesmoke;
+        }
+
+        #main {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            border-top: whitesmoke;
+        }
+
+        .profile {
+            width: 260px;
+            margin: 0;
+            padding: 20px;
+            border-right : 1px whitesmoke;
+            border-top: 1px whitesmoke;
+        }
+
+        .content_container {
+            padding: 20px;
+            border-top: 1px whitesmoke;
+            border-left: 1px whitesmoke;
+
+        }
+
+        h4, h5, h6 {
+            color: papayawhip;
+            margin: 0;
+            padding: 0;
+        }
+
+
+        .page-header h1, .page-header h1 a, .page-header h1 a:visited, .page-header h1 a:active {
+            color: #ffffff;
+            font-size: 36pt;
+            text-decoration: none;
+        }
+
+        .content {
+            margin-left: 40px;
+        }
+
+        h1, h2, h3, h4, h5, h6{
+            color: whitesmoke;
+        }
+
+        href {
+            color:lightyellow;
+            border: lightyellow;
+        }
+
+        .date {
+            color: #828282;
+        }
+
+        .save {
+            float: right;
+        }
+
+        .post-form textarea, .post-form input {
+            width: 100%;
+        }
+
+        .top-menu, .top-menu:hover, .top-menu:visited {
+            color: #ffffff;
+            float: right;
+            font-size: 26pt;
+            margin-right: 20px;
+        }
+
+        .post {
+            margin-bottom: 70px;
+        }
+
+        .post h1 a, .post h1 a:visited {
+            color: #000000;
+        }
+
+        .errorlist {
+            color: red;
+            font-weight: bold;
+        }
+
+        .comment {
+            margin: 20px 0px 20px 20px;
+        }
+
+        .vr {
+            display: block;
+            width: 10px;
+            background-color: #000;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 100px;
+        }
+    </style>
+</head>
+<body>
+    {% if user.is_authenticated %}
+        <div class = "page-header">
+
+            <h1><a href="{% url 'main' %}">OSP Cloud</a></h1>
+            <hr>
+        </div>
+        <div id  = "main">
+            <div class = "profile">
+                <h5> {{ userinfo.name }} </h5>
+                <h6> {{ userinfo.email }} </h6>
+                <br><br><br>
+                <h4><center><a href="{% url 'user_edit' pk=user.pk %}">회원정보수정</a>&nbsp;&nbsp;
+                    <a href="{% url 'logout' %}">로그아웃</a></center></h4>
+            </div>
+            <div class="content_container">
+                    {% block content %}
+                    {% endblock %}
+            </div>
+        </div>
+    {% else %}
+        <div class="page-header">
+            <h1><a href="{% url 'main' %}">
+                <center>OSP Cloud</center>
+            </a></h1>
+            <br><br>
+            <a href="{% url 'login' %}"><center>
+                <button type="button" class="save btn btn-primary">로그인</button>
+            </center></a>
+            <a href="{% url 'sign_up' %}"><center>
+                <button type="button" class="save btn btn-primary">회원가입</button>
+            </center></a>
+        </div>
+    {% endif %}
+</body>
+
+</html>
